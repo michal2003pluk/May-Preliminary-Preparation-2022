@@ -105,6 +105,21 @@ class Breakthrough {
         }
     }
 
+    /**
+     * Offers the user an option to load a game (from game1.txt) or play a new game
+     * <br>
+     * Creates a standard 33-card deck
+     * <br>
+     * Shuffles the deck
+     * <br>
+     * Takes the first 5 cards from the deck and moves them to the player's hand
+     * <br>
+     * 5 Difficulty cards are added to the deck
+     * <br>
+     * The deck is reshuffled
+     * <br>
+     * A random lock is chosen as the next one which should be solved
+     */
     private void setupGame() {
         String choice;
         Console.write("Enter L to load a game from a file, anything else to play a new game:> ");
@@ -221,6 +236,10 @@ class Breakthrough {
         }
     }
 
+    /**
+     * Loads all the locks (and their challenges) into the program
+     * All the loaded locks are stored in the global <var>locks</var> object
+     */
     private void LoadLocks() {
         String fileName = "locks.txt";
         String lineFromFile;
@@ -245,6 +264,10 @@ class Breakthrough {
         }
     }
 
+    /**
+     * Returns a random lock from the <var>locks</var> collection
+     * @return
+     */
     private Lock getRandomLock() {
         return locks.get(rNoGen.nextInt(locks.size()));
     }
@@ -308,12 +331,29 @@ class Breakthrough {
         return choice;
     }
 
+    /**
+     * Adds 5 difficulty cards to the deck
+     * This is executed after the player has their 5 initial cards in their hand
+     */
     private void addDifficultyCardsToDeck() {
         for (int count = 1; count <= 5; count++) {
             deck.addCard(new DifficultyCard());
         }
     }
 
+    /**
+     * Loads all the toolkits/tools into the deck
+     * <br>
+     * 3 Toolkits: Acute Kit, Basic Kit, Crude Kit
+     * <br>
+     * 3 Tools: Pick, File, Key
+     * <br>
+     * 5 Picks in each kit
+     * <br>
+     * 3 Files in each kit
+     * <br>
+     * 3 Keys in each kit
+     */
     private void createStandardDeck() {
         Card newCard;
         for (int count = 1; count <= 5; count++) {
@@ -340,6 +380,13 @@ class Breakthrough {
         }
     }
 
+    /**
+     * Moves a card from one CardCollection to another
+     * @param fromCollection
+     * @param toCollection
+     * @param cardNumber
+     * @return score of a card when moving a card from hand to sequence
+     */
     private int moveCard(CardCollection fromCollection, CardCollection toCollection, int cardNumber) {
         int score = 0;
         if (fromCollection.getName().equals("HAND") && toCollection.getName().equals("SEQUENCE")) {
