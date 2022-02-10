@@ -1,0 +1,9 @@
+Add an option for adding new locks
+Add an option for add new challenges to locks – Validate using regex
+Create an info menu which shows the different kits and what each includes
+Accept lowercase and uppercase input
+Add a difficulty which means the order of solving challenges does matter
+Add an option for adding a new toolkit or new tool to the game
+Implement the Discard Inspect Feature
+Save games in a specific games folder instead of in the default root folder
+Allow the user to load more than one of their previous games - currently this is hard coded to game1.txt
