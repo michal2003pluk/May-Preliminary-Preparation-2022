@@ -1,11 +1,15 @@
 Add an option for adding new locks
-Add an option for add new challenges to locks – Validate using regex
+Add an option for add new challenges to locks – Validate using regex i.e. update a lock
 Create an info menu which shows the different kits and what each includes
 Accept lowercase and uppercase input
 Add a difficulty which means the order of solving challenges does matter
 Add an option for adding a new toolkit or new tool to the game
 Save games in a specific games folder instead of in the default root folder
 Allow the user to load more than one of their previous games - currently this is hard coded to game1.txt
+Allow the user to save their game at any time
 Optimise the process of loading the toolkits and tools into the deck
 Ask if the user wants to play again
 Allow the user to save their game
+Ensure the program only discards 5 cards when the user chooses D and not when it's not between 1-5
+Add an exit/save to file option
+Update game save file

@@ -50,41 +50,58 @@ class Breakthrough {
         LoadLocks();
     }
 
+    /**
+     * Main Procedure which controls the flow of the game
+     */
     public void playGame() {
         String menuChoice;
+        // While there are still locks to be solved
         if (locks.size() > 0) {
+            // Init
             gameOver = false;
             currentLock = new Lock();
             setupGame();
+            // While the game is not over
             while (!gameOver) {
                 lockSolved = false;
+                // While the lock has not been solved and the player has not lost
                 while (!lockSolved && !gameOver) {
+                    // The game display
                     Console.writeLine();
                     Console.writeLine("Current score: " + score);
                     Console.writeLine(currentLock.getLockDetails());
                     Console.writeLine(sequence.getCardDisplay());
                     Console.writeLine(hand.getCardDisplay());
+                    // Asks if the player wants to discard inspect or use a card
                     menuChoice = getChoice();
                     switch (menuChoice) {
                         case "D":
+                            // Shows the discard pile
                             Console.writeLine(discard.getCardDisplay());
                             break;
                         case "U":
+                            // Asks the user which card they want to use
                             int cardChoice = getCardChoice();
+                            // Asks the user whether they want to discard or use the card
                             String discardOrPlay = getDiscardOrPlayChoice();
                             if (discardOrPlay.equals("D")) {
+                                // Discards the selected card
                                 moveCard(hand, discard, hand.getCardNumberAt(cardChoice - 1));
+                                // Fetches a card from the deck to add to the user's hand
                                 getCardFromDeck(cardChoice);
                             } else if (discardOrPlay.equals("P")) {
+                                // Plays the selected card to the sequence
                                 playCardToSequence(cardChoice);
                             }
                             break;
                     }
+                    // Checks if the lock has been solved i.e. if any of the challenges have been solved
                     if (currentLock.getLockSolved()) {
                         lockSolved = true;
                         processLockSolved();
                     }
                 }
+                // Checks if the player has lost
                 gameOver = checkIfPlayerHasLost();
             }
         } else {
@@ -133,17 +150,17 @@ class Breakthrough {
 
     /**
      * Offers the user an option to load a game (from game1.txt) or play a new game
-     * <br>
+     * <p>
      * Creates a standard 33-card deck
      * <br>
      * Shuffles the deck
-     * <br>
+     * <p>
      * Takes the first 5 cards from the deck and moves them to the player's hand
-     * <br>
+     * <p>
      * 5 Difficulty cards are added to the deck
      * <br>
      * The deck is reshuffled
-     * <br>
+     * <p>
      * A random lock is chosen to be solved
      */
     private void setupGame() {
@@ -172,17 +189,30 @@ class Breakthrough {
         }
     }
 
+    /**
+     * Plays the selected card to the sequence
+     * <br>
+     * Checks if the card is valid i.e. can't play the same type of tool twice in a row
+     * <br>
+     * After the card is played to the sequence, it checks if the card has solved any challenges
+     * @param cardChoice The card the user has selected to play to the sequence
+     */
     private void playCardToSequence(int cardChoice) {
         if (sequence.getNumberOfCards() > 0) {
-            // Checks if the user is trying to play the same card twice
+            // If the user is trying to play a card different to the last card in the sequence
+            // This is checked to ensure the same type of tool is not played twice in a row
             if (hand.getCardDescriptionAt(cardChoice - 1).charAt(0) != sequence.getCardDescriptionAt(sequence.getNumberOfCards() - 1).charAt(0)) {
+                // Moves the card from the user's hand to the sequence and fetches a new card from the deck
                 score += moveCard(hand, sequence, hand.getCardNumberAt(cardChoice - 1));
                 getCardFromDeck(cardChoice);
             }
         } else {
+            // Since the sequence is empty, the user can play any card
             score += moveCard(hand, sequence, hand.getCardNumberAt(cardChoice - 1));
             getCardFromDeck(cardChoice);
         }
+
+        // Checks if the user has solved a challenge in the lock
         if (checkIfLockChallengeMet()) {
             Console.writeLine();
             Console.writeLine("A challenge on the lock has been met.");
@@ -321,6 +351,7 @@ class Breakthrough {
 
     /**
      * Loads all the locks (and their challenges) into the program
+     * <p>
      * All the loaded locks are stored in the global <var>locks</var> object
      */
     private void LoadLocks() {
@@ -361,6 +392,10 @@ class Breakthrough {
         return locks.get(rNoGen.nextInt(locks.size()));
     }
 
+    /**
+     *
+     * @param cardChoice
+     */
     private void getCardFromDeck(int cardChoice) {
         // If there are cards in the deck
         if (deck.getNumberOfCards() > 0) {
@@ -393,7 +428,8 @@ class Breakthrough {
 
     /**
      * Returns the card which user has chosen to select (1-5)
-     *
+     * <p>
+     * This is the second user input prompt
      * @return the card which user has chosen to select (1-5)
      */
     private int getCardChoice() {
@@ -419,7 +455,8 @@ class Breakthrough {
 
     /**
      * Prompts the user for input and returns the choice of the user to discard or play a card
-     *
+     * <p>
+     * This is the third user input prompt
      * @return the choice of the user (D or P)
      */
     private String getDiscardOrPlayChoice() {
@@ -431,7 +468,8 @@ class Breakthrough {
 
     /**
      * Prompts the user for input and returns the choice of the player to discard or use a card
-     *
+     * <p>
+     * This is the first user input prompt
      * @return the choice of the player (D or U)
      */
     private String getChoice() {
@@ -852,31 +890,62 @@ class DifficultyCard extends Card {
         return cardType;
     }
 
+    /**
+     * Process what should happen when the user has encountered a difficulty card
+     * Depending on the <var>choice</var>, the program will either remove a key or discard 5 cards from the deck
+     * @param deck the  deck
+     * @param discard the user's discard pile
+     * @param hand the user's hand
+     * @param sequence the sequence of cards
+     * @param currentLock the current lock
+     * @param choice the user's choice whether they want to discard a key (1-5) or if they want to discard 5 cards
+     * @param cardChoice the card the user wants to play to the sequence
+     */
     @Override
     public void process(CardCollection deck, CardCollection discard, CardCollection hand, CardCollection sequence, Lock currentLock, String choice, int cardChoice) {
         int choiceAsInteger = 0;
         boolean parsed;
+        // Converts the choice to an integer
         try {
             choiceAsInteger = Integer.parseInt(choice);
             parsed = true;
         } catch (NumberFormatException e) {
             parsed = false;
         }
+        // If the choice was a valid integer
         if (parsed) {
+            // If the choice is between 1 and 5
             if (choiceAsInteger >= 1 && choiceAsInteger <= 5) {
+
+                // Un/intentional bug discovered: https://gyazo.com/0e043bd6abb04defeb6c910af8b23c08
+                // Because one of the cards is moved from the hand to the sequence, the options should no longer be 1-5
+                // Instead, the options should be 1-4
+                // Steps to reproduce:
+                // 1. Load the game from the file
+                // 2. U, 1, P
+                // 3. U, 1, P
+                // 4. Encounter a difficulty card
+                // 5. Try to lose card #2 (K a)
+                // Result: Game attempts to remove Card #1 instead but since it's not a key, it discards 5 cards
+
                 if (choiceAsInteger >= cardChoice) {
                     choiceAsInteger -= 1;
                 }
+                // Removes one from the variable for zero indexing
                 if (choiceAsInteger > 0) {
                     choiceAsInteger -= 1;
                 }
+                // If the chosen card is a key card, it is discarded and the method returns
+                // If the chosen card is not a key, method proceeds and discards 5 cards from the deck
                 if (hand.getCardDescriptionAt(choiceAsInteger).charAt(0) == 'K') {
+                    // Moves the card from the hand to the discard pile
                     Card cardToMove = hand.removeCard(hand.getCardNumberAt(choiceAsInteger));
                     discard.addCard(cardToMove);
                     return;
                 }
             }
         }
+        // Discards 5 cards from the deck
         int count = 0;
         while (count < 5 && deck.getNumberOfCards() > 0) {
             Card cardToMove = deck.removeCard(deck.getCardNumberAt(0));
