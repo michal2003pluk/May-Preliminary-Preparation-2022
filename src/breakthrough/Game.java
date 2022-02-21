@@ -223,9 +223,9 @@ class Breakthrough {
 
     /**
      * Checks if any of the challenges have been met by the new card added to the sequence
-     *
+     * <p>
+     * Note: Returns true immediately after the first challenge is met meaning there could be other challenges that were met
      * @return true if a challenge has been met, false otherwise
-     * Note: Returns true immediately after the first challenge is met meaning there could be other challenges that were mets
      */
     private boolean checkIfLockChallengeMet() {
         String sequenceAsString = "";
@@ -248,10 +248,10 @@ class Breakthrough {
     }
 
     /**
-     * Extracts card data from a string and adds it to the specified CardCollection
+     * Extracts card data from a string and adds it to the specified {@link CardCollection}
      *
      * @param lineFromFile The string containing the card data
-     * @param cardCol      the CardCollection to add the cards to
+     * @param cardCol      the {@link CardCollection} to add the cards to
      */
     private void setupCardCollectionFromGameFile(String lineFromFile, CardCollection cardCol) {
         List<String> splitLine;
@@ -352,7 +352,7 @@ class Breakthrough {
     /**
      * Loads all the locks (and their challenges) into the program
      * <p>
-     * All the loaded locks are stored in the global <var>locks</var> object
+     * All the loaded locks are stored in the global {@link Breakthrough#locks} list
      */
     private void LoadLocks() {
         // Init
@@ -384,23 +384,25 @@ class Breakthrough {
     }
 
     /**
-     * Returns a random lock from the <var>locks</var> collection
+     * Returns a random lock from the {@link Breakthrough#locks} collection
      *
-     * @return a random lock from the <var>locks</var> collection
+     * @return a random lock from the {@link Breakthrough#locks} collection
      */
     private Lock getRandomLock() {
         return locks.get(rNoGen.nextInt(locks.size()));
     }
 
     /**
+     * Refills the player's {@link Breakthrough#hand} with the top cards from the {@link Breakthrough#deck}
      *
-     * @param cardChoice
+     * @param cardChoice the card the player wishes to play to the sequence
      */
     private void getCardFromDeck(int cardChoice) {
         // If there are cards in the deck
         if (deck.getNumberOfCards() > 0) {
-            // If the first card is a difficulty card
+            // If the first card is a difficulty card then it is dealt with
             if (deck.getCardDescriptionAt(0).equals("Dif")) {
+                // Prints out difficulty card dialog
                 Card currentCard = deck.removeCard(deck.getCardNumberAt(0));
                 Console.writeLine();
                 Console.writeLine("Difficulty encountered!");
@@ -409,10 +411,15 @@ class Breakthrough {
                 Console.write("(enter 1-5 to specify position of key) or (D)iscard five cards from the deck:> ");
                 String choice = Console.readLine();
                 Console.writeLine();
+                // Discards the encountered difficulty card
                 discard.addCard(currentCard);
+                // Allows the user to choose between discarding a key from their hand or discarding five cards
                 currentCard.process(deck, discard, hand, sequence, currentLock, choice, cardChoice);
             }
         }
+
+        // Refills the player's hand with cards from the deck
+        // Prints a message if a difficulty card is removed in the process
         while (hand.getNumberOfCards() < 5 && deck.getNumberOfCards() > 0) {
             if (deck.getCardDescriptionAt(0).equals("Dif")) {
                 moveCard(deck, discard, deck.getCardNumberAt(0));
@@ -421,6 +428,7 @@ class Breakthrough {
                 moveCard(deck, hand, deck.getCardNumberAt(0));
             }
         }
+        // If the deck has no cards left and the player does not have 5 cards in their hand then game over
         if (deck.getNumberOfCards() == 0 && hand.getNumberOfCards() < 5) {
             gameOver = true;
         }
@@ -534,7 +542,7 @@ class Breakthrough {
     }
 
     /**
-     * Moves a card from one CardCollection to another
+     * Moves a card from one {@link CardCollection} to another
      *
      * @param fromCollection the CardCollection to move the card from
      * @param toCollection   the CardCollection to move the card to
@@ -892,7 +900,7 @@ class DifficultyCard extends Card {
 
     /**
      * Process what should happen when the user has encountered a difficulty card
-     * Depending on the <var>choice</var>, the program will either remove a key or discard 5 cards from the deck
+     * Depending on the {@code choice}, the program will either remove a key or discard 5 cards from the deck
      * @param deck the  deck
      * @param discard the user's discard pile
      * @param hand the user's hand
@@ -1063,7 +1071,7 @@ class CardCollection {
     }
 
     /**
-     * Creates a string with 6*<code>size</code> dashes
+     * Creates a string with 6*{@code size} dashes
      *
      * @param size The number of dashes to create
      * @return A string of dashes

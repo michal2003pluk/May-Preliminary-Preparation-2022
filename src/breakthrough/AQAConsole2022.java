@@ -83,7 +83,7 @@ class Console {
      * @param o the object to be printed to the console.
      */
     public static void writeLine(Object o) {
-        println(o);
+    println(o);
     } // end method writeLine
 
     /**
